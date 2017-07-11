@@ -65,6 +65,15 @@ showStatus("updateFormLink", !$salesAutopilot->get_error());
 $result = $salesAutopilot->landingPageLink(SA_LANDING_PAGE_ID,6);
 showStatus("landingPageLink", !$salesAutopilot->get_error());
 
+$result = $salesAutopilot->filteredListWithValue(SA_SEGMENT_ID);
+showStatus("filteredList", !$salesAutopilot->get_error());
+
+$result = $salesAutopilot->filteredListOrderWithValue("subdate", "desc", 1, SA_SEGMENT_ID);
+showStatus("filteredListOrder", !$salesAutopilot->get_error());
+	
+$result = $salesAutopilot->getSegmentNum(SA_SEGMENT_ID);
+showStatus("getSegmentNum", !$salesAutopilot->get_error());
+
 $result = $salesAutopilot->unsubscribeById($id);
 showStatus("unsubscribe (unsubscribeById)", $result>0 && !$salesAutopilot->get_error());
 
@@ -76,55 +85,8 @@ showStatus("unsubscribe (unsubscribeByField)", $result>0 && !$salesAutopilot->ge
 	
 $result = $salesAutopilot->deleteById($id);
 showStatus("delete (deleteById)", $result>0 && !$salesAutopilot->get_error());
-	
-$name = "TestGlobalVar" . $id;
-$result = $salesAutopilot->createGlobalVarWithValue($name, "html value", "text value");
-showStatus("createGlobalVar (createGlobalVarWithValue)", $result!=NULL && !$salesAutopilot->get_error());
 
-$result = $salesAutopilot->updateGlobalVarWithValue($name, "updated html value", "updated text value");
-showStatus("updateGlobalVar (updateGlobalVarWithValue)", $result!=NULL && !$salesAutopilot->get_error());
-
-$result = $salesAutopilot->getGlobalVar($name);
-showStatus("getGlobalVar", $result!=NULL && !$salesAutopilot->get_error());
-	
-$prod_id = $result = $salesAutopilot->createProductWithValue("TestProd", "100", "21.0", "EUR", "TP999", []);
-showStatus("createProduct (createProductWithValue)", $result>0 && !$salesAutopilot->get_error());
-
-$result = $salesAutopilot->modifyProductByIdWithValue($prod_id, "TestProd-mod", "200", "20.1", "EUR", "TP1999", []);
-showStatus("modifyProduct (modifyProductByIdWithValue)", $result>0 && !$salesAutopilot->get_error());
-
-$result = $salesAutopilot->getProduct($prod_id);
-showStatus("getProduct", !$salesAutopilot->get_error());
-
-$result = $salesAutopilot->listProducts();
-showStatus("listProducts", !$salesAutopilot->get_error());
-
-$result = $salesAutopilot->deleteProduct($prod_id);
-showStatus("deleteProduct", !$salesAutopilot->get_error());
-	
-$prodcat_id = $result = $salesAutopilot->createProdCategoryWithValue("Test ProductCategory");
-showStatus("createProdCategoryWithValue", !$salesAutopilot->get_error());
-	
-$result = $salesAutopilot->modProdCategoryWithValue($prodcat_id, "Updated Test ProductCategory");
-showStatus("modProdCategoryWithValue", !$salesAutopilot->get_error());
-
-$result = $salesAutopilot->getProdCategory($prodcat_id);
-showStatus("getProdCategory", !$salesAutopilot->get_error());
-	
-$result = $salesAutopilot->delProdCategory($prodcat_id);
-showStatus("delProdCategory", $result===1 && !$salesAutopilot->get_error());
-
-$result = $salesAutopilot->listProdCategories();
-showStatus("listProdCategories", !$salesAutopilot->get_error());
-	
-$result = $salesAutopilot->filteredListWithValue(SA_SEGMENT_ID);
-showStatus("filteredList", !$salesAutopilot->get_error());
-
-$result = $salesAutopilot->filteredListOrderWithValue("subdate", "desc", 1, SA_SEGMENT_ID);
-showStatus("filteredListOrder", !$salesAutopilot->get_error());
-	
-$result = $salesAutopilot->getSegmentNum(SA_SEGMENT_ID);
-showStatus("getSegmentNum", !$salesAutopilot->get_error());
+echo "<h2>List handling</h2>";
 	
 $result = $salesAutopilot->getLists();
 showStatus("getLists", !$salesAutopilot->get_error());
@@ -144,38 +106,10 @@ showStatus("fieldOptionEditWithValue", $result===1 && !$salesAutopilot->get_erro
 $result = $salesAutopilot->getFieldOptions("mssys_crm_status");
 showStatus("getFieldOptions", !$salesAutopilot->get_error());
 	
-$result = $salesAutopilot->sendMailWithValue(SA_SCHEDULE_ID, 6, "CUSTOM_TEXT", "CUSTOM_HTML");
-showStatus("sendMailWithValue", !$salesAutopilot->get_error());
 
-$letterids = $result = $salesAutopilot->sentEmailIds('2017-07-01','2017-07-31');
-showStatus("sentEmailIds", !$salesAutopilot->get_error());
-
-$result = $salesAutopilot->sendLogSummary($letterids[0]);
-showStatus("sendLogSummary", !$salesAutopilot->get_error());
-
-$result = $salesAutopilot->sendLogList($letterids[0]);
-showStatus("sendLogList", !$salesAutopilot->get_error());
-	
-$events = $result = $salesAutopilot->listTaskByStatus(1);
-showStatus("listTaskByStatus", !$salesAutopilot->get_error());
-
-$result = $salesAutopilot->closeEvent($events[0]->event_id);
-showStatus("closeEvent", !$salesAutopilot->get_error());
-	
-$result = $salesAutopilot->couponCheck(array(
-	"coupon_code" => "Coupon1",
-	"products" => array(array(
-		"prod_id" => SA_PROD_1_ID,
-		"quantity" => 1,
-		"price" => 1000))));
-showStatus("couponCheck", !$salesAutopilot->get_error());
-
-$result = $salesAutopilot->couponCheckWithValue("Coupon1", SA_PROD_1_ID, 1, 1000);
-showStatus("couponCheck (couponCheckWithValue)", !$salesAutopilot->get_error());
-	
 echo "<h2>eCommerce</h2>";
 	
-$salesAutopilot = new salesAutopilot(SA_USERNAME, SA_PASSWORD, SA_ORDER_LIST_ID, SA_ORDER_WITH_1_PROD_FORM_ID, false); // SSL:false
+$salesAutopilot = new salesAutopilot(SA_ORDER_LIST_ID, SA_ORDER_WITH_1_PROD_FORM_ID, SA_USERNAME, SA_PASSWORD, false); // SSL:false
 
 $result = $salesAutopilot->saveOrder(array(
 	"email" => "john.doo@salesautopilot.com",
@@ -186,7 +120,7 @@ $result = $salesAutopilot->saveOrder(array(
 	"prod_id" => SA_PROD_1_ID));
 showStatus("saveOrder (with 1 product form)", $result>0 && !$salesAutopilot->get_error());
 
-$salesAutopilot = new salesAutopilot(SA_USERNAME, SA_PASSWORD, SA_ORDER_LIST_ID, SA_ORDER_WITH_MORE_PROD_FORM_ID, false); // SSL:false
+$salesAutopilot = new salesAutopilot(SA_ORDER_LIST_ID, SA_ORDER_WITH_MORE_PROD_FORM_ID, SA_USERNAME, SA_PASSWORD, false); // SSL:false
 
 $id = $result = $salesAutopilot->saveOrder(array(
 	"email" => "john.doo@salesautopilot.com",
@@ -227,16 +161,8 @@ showStatus("orderListProducts", !$salesAutopilot->get_error());
 $product = $result = $salesAutopilot->orderListProduct($result[0]->oi_id);
 showStatus("orderListProduct", !$salesAutopilot->get_error());
 
-$result = $salesAutopilot->couponCheckWithProduct("Coupon1", $product);
-showStatus("couponCheck (couponCheckWithProduct)", !$salesAutopilot->get_error());
-
-$result = $salesAutopilot->couponCheckWithProducts("Coupon1", $products);
-showStatus("couponCheck (couponCheckWithProducts)", !$salesAutopilot->get_error());
-	
 $result = $salesAutopilot->orderDelProductByProdId($id, SA_PROD_1_ID);
 showStatus("orderDelProductByProdId", $result>0 && !$salesAutopilot->get_error());
-	
-
 	
 define('SA_WEB_PROD_1_ID',595769);
 define('SA_WEB_PROD_1_SKU',"WEB_P1");
@@ -269,6 +195,93 @@ showStatus("webshopOrderModProductByProdId", $result>0 && !$salesAutopilot->get_
 
 $result = $salesAutopilot->webshopOrderModProductByProdSKU(SA_WEB_ORDER_ID, SA_WEB_PROD_1_SKU, 4, 2);
 showStatus("webshopOrderModProductByProdSKU", $result>0 && !$salesAutopilot->get_error());
+
+echo "<h2>Handling Product Categories</h2>";
+
+$prodcat_id = $result = $salesAutopilot->createProdCategoryWithValue("Test ProductCategory");
+showStatus("createProdCategoryWithValue", !$salesAutopilot->get_error());
 	
+$result = $salesAutopilot->modProdCategoryWithValue($prodcat_id, "Updated Test ProductCategory");
+showStatus("modProdCategoryWithValue", !$salesAutopilot->get_error());
+
+$result = $salesAutopilot->getProdCategory($prodcat_id);
+showStatus("getProdCategory", !$salesAutopilot->get_error());
+	
+$result = $salesAutopilot->delProdCategory($prodcat_id);
+showStatus("delProdCategory", $result===1 && !$salesAutopilot->get_error());
+
+$result = $salesAutopilot->listProdCategories();
+showStatus("listProdCategories", !$salesAutopilot->get_error());
+
+echo "<h2>Handling Products</h2>";
+
+$prod_id = $result = $salesAutopilot->createProductWithValue("TestProd", "100", "21.0", "EUR", "TP999", []);
+showStatus("createProduct (createProductWithValue)", $result>0 && !$salesAutopilot->get_error());
+
+$result = $salesAutopilot->modifyProductByIdWithValue($prod_id, "TestProd-mod", "200", "20.1", "EUR", "TP1999", []);
+showStatus("modifyProduct (modifyProductByIdWithValue)", $result>0 && !$salesAutopilot->get_error());
+
+$result = $salesAutopilot->getProduct($prod_id);
+showStatus("getProduct", !$salesAutopilot->get_error());
+
+$result = $salesAutopilot->listProducts();
+showStatus("listProducts", !$salesAutopilot->get_error());
+
+$result = $salesAutopilot->deleteProduct($prod_id);
+showStatus("deleteProduct", !$salesAutopilot->get_error());
+	
+echo "<h2>Handling coupons</h2>";
+
+$result = $salesAutopilot->couponCheck(array(
+	"coupon_code" => "Coupon1",
+	"products" => array(array(
+		"prod_id" => SA_PROD_1_ID,
+		"quantity" => 1,
+		"price" => 1000))));
+showStatus("couponCheck", !$salesAutopilot->get_error());
+
+$result = $salesAutopilot->couponCheckWithProduct("Coupon1", $product);
+showStatus("couponCheck (couponCheckWithProduct)", !$salesAutopilot->get_error());
+
+$result = $salesAutopilot->couponCheckWithProducts("Coupon1", $products);
+showStatus("couponCheck (couponCheckWithProducts)", !$salesAutopilot->get_error());
+	
+$result = $salesAutopilot->couponCheckWithValue("Coupon1", SA_PROD_1_ID, 1, 1000);
+showStatus("couponCheck (couponCheckWithValue)", !$salesAutopilot->get_error());
+
+echo "<h2>Handling mails</h2>";
+
+$result = $salesAutopilot->sendMailWithValue(SA_SCHEDULE_ID, 6, "CUSTOM_TEXT", "CUSTOM_HTML");
+showStatus("sendMailWithValue", !$salesAutopilot->get_error());
+
+$letterids = $result = $salesAutopilot->sentEmailIds('2017-07-01','2017-07-31');
+showStatus("sentEmailIds", !$salesAutopilot->get_error());
+
+$result = $salesAutopilot->sendLogSummary($letterids[0]);
+showStatus("sendLogSummary", !$salesAutopilot->get_error());
+
+$result = $salesAutopilot->sendLogList($letterids[0]);
+showStatus("sendLogList", !$salesAutopilot->get_error());
+
+echo "<h2>Handling Global variables</h2>";
+	
+$name = "TestGlobalVar" . $id;
+$result = $salesAutopilot->createGlobalVarWithValue($name, "html value", "text value");
+showStatus("createGlobalVar (createGlobalVarWithValue)", $result!=NULL && !$salesAutopilot->get_error());
+
+$result = $salesAutopilot->updateGlobalVarWithValue($name, "updated html value", "updated text value");
+showStatus("updateGlobalVar (updateGlobalVarWithValue)", $result!=NULL && !$salesAutopilot->get_error());
+
+$result = $salesAutopilot->getGlobalVar($name);
+showStatus("getGlobalVar", $result!=NULL && !$salesAutopilot->get_error());
+
+echo "<h2>CRM</h2>";
+
+$events = $result = $salesAutopilot->listTaskByStatus(0);
+showStatus("listTaskByStatus", !$salesAutopilot->get_error());
+
+$result = $salesAutopilot->closeEvent($events[0]->event_id);
+showStatus("closeEvent", !$salesAutopilot->get_error());
+
 ?>
 </body>
