@@ -91,11 +91,25 @@ echo "<h2>List handling</h2>";
 $result = $salesAutopilot->getLists();
 showStatus("getLists", !$salesAutopilot->get_error());
 
+$result = $salesAutopilot->getForms();
+showStatus("getForms", !$salesAutopilot->get_error());
+
 $result = $salesAutopilot->listFields();
 showStatus("listFields", !$salesAutopilot->get_error());
 
-$result = $salesAutopilot->getForms();
-showStatus("getForms", !$salesAutopilot->get_error());
+$result = $salesAutopilot->checkFieldExists("id");
+showStatus("checkFieldExists", !$salesAutopilot->get_error());
+	                                                   
+
+$result = $salesAutopilot->addListFieldWithValue('nf_st'. time(), 'Új shorttext mező ' . time(), 'Added by addListFieldWithValue', 'shorttext');
+showStatus("addListFieldWithValue (shorttext)", !$salesAutopilot->get_error());
+
+$result = $salesAutopilot->addListFieldWithValue('nf_dc'. time(), 'Új decimal mező ' . time(), 'Added by addListFieldWithValue', 'decimal', 3);
+showStatus("addListFieldWithValue (decimal)", !$salesAutopilot->get_error());
+
+$result = $salesAutopilot->addListFieldWithValue('nf_sl'. time(), 'Új select mező ' . time(), 'Added by addListFieldWithValue', 'select',
+	array("field1" => "value1", "field2" => "value2", "field3" => "value3"));
+showStatus("addListFieldWithValue (select)", !$salesAutopilot->get_error());
 	
 $result = $salesAutopilot->fieldOptionAddWithValue("mssys_crm_status","A100","New");
 showStatus("fieldOptionAddWithValue", $result===1 && !$salesAutopilot->get_error());

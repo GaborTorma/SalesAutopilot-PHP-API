@@ -1,6 +1,6 @@
 <?php
 /**
- * A SalesAutopilot REST API teljes implementációja. - 2017.07.04
+ * A SalesAutopilot REST API teljes implementációja. - 2018.03.10
  *
  * Használatához szükséges
  *   - legalább PHP5.2
@@ -288,6 +288,7 @@ class salesAutopilot {
 		$url = $this->api_url."delete/{$this->nl_id}/record/$id";
 		return $this->send_request($url, NULL, 'DELETE');
 	}
+
 	public function deleteById($id) {
 		return $this->delete($id);
 	}
@@ -303,18 +304,54 @@ class salesAutopilot {
 		return $this->send_request($url);
 	}
 
-// Lista mezőinek lekérdezése - listfields
+// Email listához tartozó űrlapok lekérdezése (az adatmódosító űrlapok nélkül!)
+
+	public function getForms() {
+		$url = $this->api_url."getforms/{$this->nl_id}";
+		return $this->send_request($url);
+	}
+	
+// Visszaadja az adott listá mezőinek neveit.
 
 	public function listFields() {
 		$url = $this->api_url."listfields/{$this->nl_id}";
 		return $this->send_request($url);
 	}
 	
-// Email listához tartozó űrlapok lekérdezése (az adatmódosító űrlapok nélkül!)
+// Visszaadja, hogy létezik-e az adott listán mező ezzel a mezőnévvel.
 
-	public function getForms() {
-		$url = $this->api_url."getforms/{$this->nl_id}";
+	// $fieldname = Mező neve, amelynek a létezését le szeretné kérdezni.
+	public function checkFieldExists($fieldname) {
+		$url = $this->api_url."checkfieldexists/{$this->nl_id}/$fieldname";
 		return $this->send_request($url);
+	}
+
+// Mező hozzáadása listához	
+
+	public function addListField($fileds) {
+		$url = $this->api_url."addlistfield/{$this->nl_id}";
+		return $this->send_request($url, $fileds);
+	}
+
+	// $field_name = Mező neve, amelyet létre szeretnénk hozni.
+	// $field_label = Mező neve, amelyet létre szeretnénk hozni.
+	// $field_comment = Mező neve, amelyet létre szeretnénk hozni.
+	// $field_type = Mező neve, amelyet létre szeretnénk hozni. Bövebb infó: https://www.salesautopilot.hu/tudasbazis/api/elemek-kezelese#addlistfield
+	// $param = Ez a scale vagy az optinons változók értéke. Csak akkor kell megadni, ha a field_type in (decimal, radio, select)
+	public function addListFieldWithValue($field_name, $field_label, $field_comment, $field_type, $param = null) {
+		$fields = array(
+			  "field_name" => $field_name,
+			  "field_label" => $field_label,
+			  "field_comment" => $field_comment,
+			  "field_type" => $field_type);
+		if (isset($param)) {
+			if ($field_type == 'decimal')
+				$fields["scale"] = $param;
+			if ($field_type == 'radio' || $field_type == 'select')
+				$fields["options"] = $param;				
+		}
+		var_dump($fields);
+		return $this->addListField($fields);
 	}
 
 // Legördülő vagy rádiógomb típusú mező opciónak lekérdezése	
