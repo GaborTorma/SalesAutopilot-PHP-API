@@ -1,9 +1,9 @@
 <?php
 /**
- * A SalesAutopilot REST API teljes implementációja. - 2018.03.10
+ * A SalesAutopilot REST API teljes implementációja. - 2018.03.10/2
  *
  * Használatához szükséges
- *   - legalább PHP5.2
+ *   - legalább PHP5.2 (javasolt: 7.0)
  *   - JSON extension
  *   - cURL extension
  * 
@@ -38,7 +38,7 @@ class salesAutopilot {
 		$this->nl_id = (int)$nl_id;
 		$this->ns_id = (int)$ns_id;
 		
-		$this->api_url = ($ssl ? "https" : "http") . "://{$this->username}:{$this->password}@api.salesautopilot.com/";
+		$this->api_url = ($ssl ? "https" : "http") . "://api.salesautopilot.com/";
 	}
 	function __get($property) {
 		return @$this->$property;
@@ -68,6 +68,8 @@ class salesAutopilot {
 		$ch = curl_init($this->url = $url);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_USERPWD,"$this->username:$this->password");
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		
 		if (isset($data)) {
 			$request = json_encode($this->get_params($data));
@@ -78,7 +80,9 @@ class salesAutopilot {
 		if ($method === 'DELETE')
 			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
 
+		var_dump($ch);
 		$response = curl_exec($ch);
+	//	var_dump($response);
 		$this->status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		curl_close($ch);
 
@@ -88,6 +92,7 @@ class salesAutopilot {
 		}
 
 		$decoded_response = json_decode($response);
+	//	var_dump($decoded_response);
 		return $decoded_response===NULL && $response !== "" ? $response : $decoded_response;
 	 }
 	
@@ -350,7 +355,6 @@ class salesAutopilot {
 			if ($field_type == 'radio' || $field_type == 'select')
 				$fields["options"] = $param;				
 		}
-		var_dump($fields);
 		return $this->addListField($fields);
 	}
 

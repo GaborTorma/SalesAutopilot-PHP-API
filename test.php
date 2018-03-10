@@ -1,6 +1,6 @@
 <body style="white-space: nowrap;">
 <?php
-include_once ("salesAutopilot.php");
+include_once ("salesautopilot.php");
 	
 function showStatus($name, $status)
 {
@@ -25,8 +25,11 @@ define('SA_PROD_2_ID',595759);
 define('SA_PROD_2_SKU',"P2");
 define('SA_SHIPPING_METHOD',33714);
 	
+$ssl = true;
+
+echo "<p>SSL: $ssl</p>";	
 	
-$salesAutopilot = new salesAutopilot(SA_CRM_LIST_ID, SA_SING_UP_FORM_ID, SA_USERNAME, SA_PASSWORD, false); // SSL:false
+$salesAutopilot = new salesAutopilot(SA_CRM_LIST_ID, SA_SING_UP_FORM_ID, SA_USERNAME, SA_PASSWORD, $ssl);
 
 echo "<h2>Handling subscribers</h2>";
 	
@@ -99,7 +102,6 @@ showStatus("listFields", !$salesAutopilot->get_error());
 
 $result = $salesAutopilot->checkFieldExists("id");
 showStatus("checkFieldExists", !$salesAutopilot->get_error());
-	                                                   
 
 $result = $salesAutopilot->addListFieldWithValue('nf_st'. time(), 'Új shorttext mező ' . time(), 'Added by addListFieldWithValue', 'shorttext');
 showStatus("addListFieldWithValue (shorttext)", !$salesAutopilot->get_error());
@@ -123,7 +125,7 @@ showStatus("getFieldOptions", !$salesAutopilot->get_error());
 
 echo "<h2>eCommerce</h2>";
 	
-$salesAutopilot = new salesAutopilot(SA_ORDER_LIST_ID, SA_ORDER_WITH_1_PROD_FORM_ID, SA_USERNAME, SA_PASSWORD, false); // SSL:false
+$salesAutopilot = new salesAutopilot(SA_ORDER_LIST_ID, SA_ORDER_WITH_1_PROD_FORM_ID, SA_USERNAME, SA_PASSWORD, $ssl);
 
 $result = $salesAutopilot->saveOrder(array(
 	"email" => "john.doo@salesautopilot.com",
@@ -134,7 +136,7 @@ $result = $salesAutopilot->saveOrder(array(
 	"prod_id" => SA_PROD_1_ID));
 showStatus("saveOrder (with 1 product form)", $result>0 && !$salesAutopilot->get_error());
 
-$salesAutopilot = new salesAutopilot(SA_ORDER_LIST_ID, SA_ORDER_WITH_MORE_PROD_FORM_ID, SA_USERNAME, SA_PASSWORD, false); // SSL:false
+$salesAutopilot = new salesAutopilot(SA_ORDER_LIST_ID, SA_ORDER_WITH_MORE_PROD_FORM_ID, SA_USERNAME, SA_PASSWORD, $ssl);
 
 $id = $result = $salesAutopilot->saveOrder(array(
 	"email" => "john.doo@salesautopilot.com",
