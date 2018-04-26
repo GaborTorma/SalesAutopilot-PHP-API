@@ -34,10 +34,18 @@ $salesAutopilot = new salesAutopilot(SA_CRM_LIST_ID, SA_SING_UP_FORM_ID, SA_USER
 echo "<h2>Handling subscribers</h2>";
 	
 $id = $result = $salesAutopilot->subscribe(array(
-	"email" => "john.doo@salesautopilot.com",
+	"email" => "john.doo2@salesautopilot.com",
     "mssys_firstname" => "John",
-    "mssys_lastname" => "Doo"));
+    "mssys_lastname" => "Doo",
+	"checkbox_field" => "no",
+	"select_field" => false,
+	"number_field" => null,
+	"date_field" => time(),
+	"datetime_field" => "2018-04-25T14:30:00.000Z",
+	"mssys_birthday" => "2017-10-20"),
+	true);
 showStatus("subscribe", $result>0 && !$salesAutopilot->get_error());
+die;
 
 $result = $salesAutopilot->updateById($id, array(
 	"email" => "doo.john@salesautopilot.com"));
@@ -110,7 +118,7 @@ $result = $salesAutopilot->addListFieldWithValue('nf_dc'. time(), 'Új decimal m
 showStatus("addListFieldWithValue (decimal)", !$salesAutopilot->get_error());
 
 $result = $salesAutopilot->addListFieldWithValue('nf_sl'. time(), 'Új select mező ' . time(), 'Added by addListFieldWithValue', 'select',
-	array("field1" => "value1", "field2" => "value2", "field3" => "value3"));
+	array("reserved" => "Foglalva", "deleted" => "Törölve"));
 showStatus("addListFieldWithValue (select)", !$salesAutopilot->get_error());
 	
 $result = $salesAutopilot->fieldOptionAddWithValue("mssys_crm_status","A100","New");
