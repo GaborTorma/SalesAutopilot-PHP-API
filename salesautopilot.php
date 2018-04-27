@@ -224,16 +224,46 @@ class salesAutopilot
 	}
 
 // UPDATING A SUBSCRIBER
-	
 	// $id = ID of subscriber whose data should be updated
-	public function update($id, $fields = null, $typeCast = false)
+	public function update($id, $fields = null, $typeCast = false, $applyCoupon = false)
 	{
+		if ($applyCoupon && array_key_exists("mssys_coupon", $fields)) {
+			$order = $this->listById($id);
+			if (isset($order->products)) {
+				$fields["mssys_order_netto_sum"] = 0;
+				$fields["mssys_order_brutto_sum"] = 0;
+				$couponCheck = array("coupon_code" => $fields["mssys_coupon"], "products" => array());
+				foreach ($order->products as $product) {
+					$fields["mssys_order_netto_sum"] += $product->oi_netto_sum;
+					$fields["mssys_order_brutto_sum"] += $product->oi_brutto_sum;
+					array_push($couponCheck["products"], array(
+						"prod_id" => $product->prod_id,
+						"quantity" => $product->oi_quantity,
+						"price" => $product->prod_price
+					));
+				}
+				$coupon = $this->couponCheck($couponCheck);
+				if (is_object($coupon)) {
+					$fields["mssys_coupon_id"] = $coupon->id;
+					$fields["mssys_coupon_type"] = $coupon->type;
+					$fields["mssys_coupon_discount_amount_netto"] = $coupon->netto_discount;
+					$fields["mssys_coupon_discount_amount_brutto"] = $coupon->brutto_discount;
+					$fields["mssys_order_netto_sum"] -= $coupon->netto_discount;
+					$fields["mssys_order_brutto_sum"] -= $coupon->brutto_discount;
+				} else {
+					$fields["mssys_coupon_id"] = 0;
+					$fields["mssys_coupon_type"] = 0;
+					$fields["mssys_coupon_discount_amount_netto"] = 0;
+					$fields["mssys_coupon_discount_amount_brutto"] = 0;
+				}
+			}
+		}
 		$url = $this->api_url . "update/{$this->nl_id}/form/{$this->ns_id}/record/" . (int)$id;
 		return $this->send_request($url, $typeCast ? $this->typeCastFields($fields) : $fields, 'PUT');
 	}
-	public function updateById($id, $fields = null, $typeCast = false)
+	public function updateById($id, $fields = null, $typeCast = false, $applyCoupon = false)
 	{
-		return $this->update($id, $fields, $typeCast);
+		return $this->update($id, $fields, $typeCast, $applyCoupon);
 	}
 
 	public function batchUpdate($fields)
